@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const connectDB = require("../db");
 
 // Define User schema
 //TO BE REDESIGNED
@@ -14,6 +15,11 @@ const userSchema = mongoose.Schema({
 });
 
 // Create User model
-const User = mongoose.model("User", userSchema);
+let User;
 
-module.exports = User;
+(async () => {
+    const { userConnection } = await connectDB();
+    User = userConnection.model("User", userSchema);
+})();
+
+module.exports = () => User;

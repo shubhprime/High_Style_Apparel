@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const connectDB = require("../db");
 
 // Define Product schema
 //TO BE REDESIGNED
@@ -12,9 +13,17 @@ const productSchema = mongoose.Schema({
         required: true,  // You can decide whether this is required
     },
     price: {
-        type: Number,
-        required: true,  // Ensures price is provided
+        amount: {
+            type: Number,
+            required: true, // Ensures price amount is provided
+        },
+        currency: {
+            type: String,
+            enum: ["USD", "EUR", "GBP", "INR", "JPY", "CAD"], // Supported currencies
+            default: "USD", // Default currency
+        },
     },
+    
     category: {
         type: String,  // e.g., shirts, pants, accessories, etc.
         required: true,
@@ -35,6 +44,11 @@ const productSchema = mongoose.Schema({
 });
 
 // Create User model
-const Product = mongoose.model("Product", productSchema);
+let Product;
 
-module.exports = Product;
+(async () => {
+    const { productConnection } = await connectDB();
+    Product = productConnection.model("Product", productSchema);
+})();
+
+module.exports = () => Product;
