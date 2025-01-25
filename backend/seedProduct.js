@@ -10,7 +10,7 @@ const getProductModel = require("./models/productDB"); // Import the Product mod
         // Sample product data to insert
         const products = [
             {
-                productName: "Classic T-Shirt",
+                productName: "Classidfsdfsfsfgfc T-Shirt",
                 description: "A comfortable and stylish t-shirt.",
                 price: {
                     amount: 19.99,

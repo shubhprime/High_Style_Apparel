@@ -5,6 +5,7 @@ const connectDB = require("./db");
 const User = require("./models/userDB");
 const Product = require("./models/productDB");
 const productRoutes = require("./routes/productRoutes");
+const authRouter = require("./authorisation/routers/authRouter");
 const path = require("path");
 
 const app = express();
@@ -42,6 +43,7 @@ app.post("/contact", async (req, res) => {
 });
 
 app.use("/products", productRoutes);  // All /products routes will now use the productRoutes file
+app.use("/api/auth", authRouter);  // Use auth routes
 
 
 app.get("*", (req, res) => {
