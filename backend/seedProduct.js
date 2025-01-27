@@ -1,16 +1,17 @@
-const connectDB = require("./db"); // Import the connectDB function
-const getProductModel = require("./models/productDB"); // Import the Product model function
+import { initializeProductModel, getProductModel } from './models/productDB.js';  // Use ES module imports
 
 (async () => {
     try {
-        // Connect to the Product database and get the Product model
-        const { productConnection } = await connectDB();
+        // Initialize the Product model
+        await initializeProductModel();
+
+        // Retrieve the Product model after initialization
         const Product = getProductModel();
 
         // Sample product data to insert
         const products = [
             {
-                productName: "Classidfsdfsfsfgfc T-Shirt",
+                productName: "Classic T-Shirt",
                 description: "A comfortable and stylish t-shirt.",
                 price: {
                     amount: 19.99,

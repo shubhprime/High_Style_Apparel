@@ -1,11 +1,12 @@
-const express = require("express");
-const Product = require("../models/productDB"); // Import the Product model
+import express from 'express';
+import { getProductModel } from '../models/productDB.js'; // Import the function to get the Product model
 
 const router = express.Router();
 
 // Create a new product
 router.post("/", async (req, res) => {
     try {
+        const Product = getProductModel();  // Retrieve the Product model
         const newProduct = new Product(req.body);
         await newProduct.save();
         console.log("Product saved:", newProduct);
@@ -22,6 +23,7 @@ router.post("/", async (req, res) => {
 // Get all products
 router.get("/", async (req, res) => {
     try {
+        const Product = getProductModel();  // Retrieve the Product model
         const products = await Product.find();
         res.status(200).json({
             message: "Products retrieved successfully",
@@ -37,6 +39,7 @@ router.get("/", async (req, res) => {
 router.get("/:id", async (req, res) => {
     const { id } = req.params;
     try {
+        const Product = getProductModel();  // Retrieve the Product model
         const product = await Product.findById(id);
         if (!product) {
             return res.status(404).json({ message: "Product not found" });
@@ -55,6 +58,7 @@ router.get("/:id", async (req, res) => {
 router.put("/:id", async (req, res) => {
     const { id } = req.params;
     try {
+        const Product = getProductModel();  // Retrieve the Product model
         const updatedProduct = await Product.findByIdAndUpdate(id, req.body, { new: true });
         if (!updatedProduct) {
             return res.status(404).json({ message: "Product not found" });
@@ -73,6 +77,7 @@ router.put("/:id", async (req, res) => {
 router.delete("/:id", async (req, res) => {
     const { id } = req.params;
     try {
+        const Product = getProductModel();  // Retrieve the Product model
         const deletedProduct = await Product.findByIdAndDelete(id);
         if (!deletedProduct) {
             return res.status(404).json({ message: "Product not found" });
@@ -87,4 +92,4 @@ router.delete("/:id", async (req, res) => {
     }
 });
 
-module.exports = router;
+export default router;
