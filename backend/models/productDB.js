@@ -1,8 +1,7 @@
-const mongoose = require("mongoose");
-const connectDB = require("../db");
+import mongoose from "mongoose";
+import { connectDB } from "../config/db.js";  // Corrected to named import
 
 // Define Product schema
-//TO BE REDESIGNED
 const productSchema = mongoose.Schema({
     productName: {
         type: String,
@@ -23,7 +22,6 @@ const productSchema = mongoose.Schema({
             default: "USD", // Default currency
         },
     },
-    
     category: {
         type: String,  // e.g., shirts, pants, accessories, etc.
         required: true,
@@ -43,12 +41,19 @@ const productSchema = mongoose.Schema({
     }
 });
 
-// Create User model
+// Declare Product variable (without initializing immediately)
 let Product;
 
-(async () => {
-    const { productConnection } = await connectDB();
+// Initialize the Product model asynchronously after DB connection
+export const initializeProductModel = async () => {
+    const { productConnection } = await connectDB();  // Await the DB connection
     Product = productConnection.model("Product", productSchema);
-})();
+};
 
-module.exports = () => Product;
+// Function to retrieve the Product model after initialization
+export const getProductModel = () => {
+    if (!Product) {
+        throw new Error("Product model is not initialized yet. Call initializeProductModel first.");
+    }
+    return Product;
+};

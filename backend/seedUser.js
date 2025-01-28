@@ -1,21 +1,20 @@
-const { initUserModel, User } = require("./models/userDB");
-
+import { initUserModel, getUserModel } from './models/userDB.js';
 
 (async () => {
     try {
-         // Wait for the User model to be initialized
-         await initUserModel(); // Initialize the user model
+        // Wait for the User model to be initialized
+        await initUserModel();
 
+        // Get the User model instance
+        const UserModel = getUserModel();  // Accessing the model after initialization
 
-        // Create a new user instance
-        const newUser = new User({
+        // Create a new user instance using the retrieved model
+        const newUser = new UserModel({
             firstName: "Jane",
             lastName: "Doe",
-            email: "jane.doe@example.com",
+            email: "janwse.doe@example.com",
             password: "google", // In a real-world scenario, hash the password
-            company: "Acme Corp",
             phone: 9876543210,
-            query: "Interested in your products",
         });
 
         // Save the new user to the database
