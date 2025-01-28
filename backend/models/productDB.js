@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { connectDB } from "../config/db.js";  // Corrected to named import
+import { connectDB } from "../db.js";  // Corrected to named import
 
 // Define Product schema
 const productSchema = mongoose.Schema({

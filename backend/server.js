@@ -1,7 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
-import { connectDB } from './config/db.js';
+import { connectDB } from './db.js';
 import { initUserModel } from './models/userDB.js';
 import { initializeProductModel, getProductModel } from './models/productDB.js'; // Use the correct exports
 import productRoutes from './routes/productRoutes.js';
@@ -63,6 +63,7 @@ const initializeApp = async () => {
         });
 
         app.use("/api/products", productRoutes);  // All /products routes will now use the productRoutes file
+        app.use("/products", productRoutes);  // All /products routes will now use the productRoutes file
 
         // Serve the frontend build
         const frontendPath = path.join(__dirname, "../frontend/build");
