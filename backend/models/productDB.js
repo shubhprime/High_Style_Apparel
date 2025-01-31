@@ -35,11 +35,11 @@ const productSchema = mongoose.Schema({
     imageURL: {
         type: String,  // URL to an image of the product (if applicable)
     },
-    createdAt: {
-        type: Date,
-        default: Date.now,
+},
+    {
+        timestamps: true,
     }
-});
+);
 
 // Declare Product variable (without initializing immediately)
 let Product;

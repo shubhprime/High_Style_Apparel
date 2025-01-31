@@ -63,7 +63,6 @@ const initializeApp = async () => {
         });
 
         app.use("/api/products", productRoutes);  // All /products routes will now use the productRoutes file
-        app.use("/products", productRoutes);  // All /products routes will now use the productRoutes file
 
         // Serve the frontend build
         const frontendPath = path.join(__dirname, "../frontend/build");
