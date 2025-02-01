@@ -1,6 +1,7 @@
 import express from 'express';
-import { login, logout, register } from '../controllers/authController.js';
+import { login, logout, register, sendVerifyOtp, verifyEmail } from '../controllers/authController.js';
 import { initUserModel } from '../../models/userDB.js';
+import userAuth from '../middleware/userAuth.js';
 
 const authRouter = express.Router();
 
@@ -13,6 +14,9 @@ const initializeRoutes = async () => {
     authRouter.post('/register', register);
     authRouter.post('/login', login);
     authRouter.post('/logout', logout);
+    authRouter.post('/send-verify-otp', userAuth, sendVerifyOtp);
+    authRouter.post('/verify-account', userAuth, verifyEmail);
+
 
     console.log("User model initialized and routes set up successfully.");
   } catch (error) {
