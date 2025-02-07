@@ -41,7 +41,7 @@ const userSchema = new mongoose.Schema(
     },
     forgotPasswordCode: {
       type: String,
-      select: false,
+      // select: false,
     },
     forgotPasswordCodeValidation: {
       type: String,

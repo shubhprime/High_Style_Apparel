@@ -1,5 +1,5 @@
 import express from 'express';
-import { login, logout, register, sendVerifyOtp, verifyEmail } from '../controllers/authController.js';
+import { isAuthenticated, login, logout, register, resetPassword, sendResetOtp, sendVerifyOtp, verifyEmail } from '../controllers/authController.js';
 import { initUserModel } from '../../models/userDB.js';
 import userAuth from '../middleware/userAuth.js';
 
@@ -16,6 +16,9 @@ const initializeRoutes = async () => {
     authRouter.post('/logout', logout);
     authRouter.post('/send-verify-otp', userAuth, sendVerifyOtp);
     authRouter.post('/verify-account', userAuth, verifyEmail);
+    authRouter.post('/is-auth', userAuth, isAuthenticated);
+    authRouter.post('/send-reset-otp', sendResetOtp);
+    authRouter.post('/reset-password', resetPassword);
 
 
     console.log("User model initialized and routes set up successfully.");

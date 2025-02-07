@@ -9,6 +9,7 @@ import { authRouter } from './authentication/routes/authRoutes.js';
 import path from 'path';
 import cookieParser from 'cookie-parser';
 import { fileURLToPath } from 'url';
+import userRouter from './routes/userRoutes.js';
 
 // Load environment variables
 dotenv.config();
@@ -62,18 +63,10 @@ const initializeApp = async () => {
             }
         });
 
-        app.use("/api/products", productRoutes);  // All /products routes will now use the productRoutes file
-
-        // Serve the frontend build
-        const frontendPath = path.join(__dirname, "../frontend/build");
-        app.use(express.static(frontendPath));
-
-        app.get("*", (req, res) => {
-            res.sendFile(path.join(frontendPath, "index.html"));
-        });
-
+        app.use("/api/products", productRoutes);  // All products routes will now use the productRoutes file        
         app.use('/api/auth', authRouter);
-
+        app.use('/api/user', userRouter);
+        
         // Start the server
         app.listen(PORT, () => {
             console.log(`Server is listening at port ${PORT}`);
