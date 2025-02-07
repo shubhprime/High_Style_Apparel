@@ -25,15 +25,19 @@ const userSchema = new mongoose.Schema(
     },
     phone: {
       type: Number,
-      required: [true, "Please enter your phone number"],
+      required: false,
     },
     verified: {
       type: Boolean,
       default: false,
     },
-    verificationCodeValidation: {
+    verificationCode: {
       type: String,
-      select: false,
+      // select: false,
+    },
+    verificationCodeExpireAt: {
+      type: Number,
+      default: 0
     },
     forgotPasswordCode: {
       type: String,
@@ -42,6 +46,10 @@ const userSchema = new mongoose.Schema(
     forgotPasswordCodeValidation: {
       type: String,
       select: false,
+    },
+    forgotPasswordCodeExpireAt: {
+      type: Number,
+      default: 0
     },
   },
   {
