@@ -141,10 +141,10 @@ export const sendVerifyOtp = async(req, res) => {
         }
         await transporter.sendMail(mailOption);
 
-        res.json({ success: true, message: 'Verification OTP sent on Email'});
+        return res.json({ success: true, message: 'Verification OTP sent on Email'});
 
     } catch (error) {
-        res.json({ success: false, message: error.message});
+        return res.json({ success: false, message: error.message});
     }
 }
 
@@ -152,7 +152,7 @@ export const verifyEmail = async (req, res) => {
     const {userId, otp} = req.body;
 
     if(!userId || !otp) {
-        res.json({ success: false, message: 'Missing Details'});
+        return res.json({ success: false, message: 'Missing Details'});
     }
 
     try {
@@ -239,7 +239,7 @@ export const resetPassword = async (req, res) => {
     const { email, otp, newPassword } = req.body;
 
     if(!email || !otp || !newPassword){
-        res.json({ success: false, message: 'Email, OTP, and new password are required'});
+        return res.json({ success: false, message: 'Email, OTP, and new password are required'});
     }
 
     try {
@@ -265,7 +265,7 @@ export const resetPassword = async (req, res) => {
 
         await user.save();
 
-        res.json({ success: true, message: 'Password has been reset successfully' });
+        return res.json({ success: true, message: 'Password has been reset successfully' });
         
     } catch (error) {
         return res.json({ success: false, message: error.message });

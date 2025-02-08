@@ -21,7 +21,6 @@ const initializeRoutes = async () => {
     authRouter.post('/reset-password', resetPassword);
 
 
-    console.log("User model initialized and routes set up successfully.");
   } catch (error) {
     console.error("Error initializing User model:", error);
   }
