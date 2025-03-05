@@ -10,6 +10,9 @@ import path from 'path';
 import cookieParser from 'cookie-parser';
 import { fileURLToPath } from 'url';
 import userRouter from './routes/userRoutes.js';
+import { orderRouter } from './orders/routes/orderRoutes.js';
+import { initOrderModel } from './models/orderDB.js';
+import levelRouter from './authentication/routes/userRoutes.js';
 
 // Load environment variables
 dotenv.config();
@@ -43,29 +46,20 @@ const initializeApp = async () => {
         const Product = getProductModel();  // Get the Product model after initialization
         console.log("Product model initialized");
 
+        // Initialize Order model
+        await initOrderModel();
+        console.log("Order model initialized");
+
         // API routes
         app.get("/", (req, res) => {
             res.send("Server is running!");
         });
 
-        app.post("/contact", async (req, res) => {
-            try {
-                const newUser = new User(req.body);
-                await newUser.save();
-                console.log("Data saved:", newUser);
-                res.status(200).json({
-                    message: "Data successfully saved",
-                    data: newUser
-                });
-            } catch (error) {
-                console.error("Error saving to the database:", error);
-                res.status(500).json({ message: "Internal Server Error", error: error.message });
-            }
-        });
-
-        app.use("/api/products", productRoutes);  // All products routes will now use the productRoutes file        
-        app.use('/api/auth', authRouter);
-        app.use('/api/user', userRouter);
+        app.use("/api/product", productRoutes);  // All products routes will now use the productRoutes file        
+        app.use('/api/auth', authRouter); // All authentication routes will now use the authRoutes file
+        app.use('/api/user', userRouter); // All user routes will now use the userRoutes file
+        app.use('/api/order', orderRouter); // All order routes will now use the orderRoutes file
+        app.use('/api/user-level', levelRouter); // All order routes will now use the orderRoutes file
         
         // Start the server
         app.listen(PORT, () => {

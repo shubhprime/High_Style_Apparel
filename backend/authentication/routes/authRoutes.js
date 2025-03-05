@@ -2,6 +2,7 @@ import express from 'express';
 import { isAuthenticated, login, logout, register, resetPassword, sendResetOtp, sendVerifyOtp, verifyEmail } from '../controllers/authController.js';
 import { initUserModel } from '../../models/userDB.js';
 import userAuth from '../middleware/userAuth.js';
+import roleAuth from '../middleware/roleAuth.js';
 
 const authRouter = express.Router();
 
@@ -16,7 +17,7 @@ const initializeRoutes = async () => {
     authRouter.post('/logout', logout);
     authRouter.post('/send-verify-otp', userAuth, sendVerifyOtp);
     authRouter.post('/verify-account', userAuth, verifyEmail);
-    authRouter.post('/is-auth', userAuth, isAuthenticated);
+    authRouter.post('/is-auth', userAuth, roleAuth(["super-admin", "admin"]), isAuthenticated);
     authRouter.post('/send-reset-otp', sendResetOtp);
     authRouter.post('/reset-password', resetPassword);
 

@@ -5,6 +5,7 @@ dotenv.config();
 
 let userConnection;
 let productConnection;
+let orderConnection;
 
 // MongoDB connection
 export const connectDB = async () => {
@@ -25,7 +26,15 @@ export const connectDB = async () => {
       });
     }
 
-    return { userConnection, productConnection };
+    // Connect to the order database
+    if (!orderConnection) {
+      orderConnection = mongoose.createConnection(process.env.MONGODB_URL_ORDER);
+      orderConnection.once("open", () => {
+        console.log("Connected to the Orders database");
+      })
+    }
+
+    return { userConnection, productConnection, orderConnection };
   } catch (error) {
     console.error("MongoDB connection error:", error);
     process.exit(1); // Exit the process if there's a connection error

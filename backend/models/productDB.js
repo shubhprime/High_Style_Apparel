@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 import { connectDB } from "../db.js";  // Corrected to named import
 
 // Define Product schema
-const productSchema = mongoose.Schema({
+const productSchema = new mongoose.Schema({
     productName: {
         type: String,
         required: true,  // Ensures product name is provided
@@ -12,15 +12,19 @@ const productSchema = mongoose.Schema({
         required: true,  // You can decide whether this is required
     },
     price: {
-        amount: {
-            type: Number,
-            required: true, // Ensures price amount is provided
+        type: {
+            amount: {
+                type: Number,
+                required: true, // Ensures price amount is provided
+                default: 0,
+            },
+            currency: {
+                type: String,
+                enum: ["USD", "EUR", "GBP", "INR", "JPY", "CAD"], // Supported currencies
+                default: "USD", // Default currency,
+            },
         },
-        currency: {
-            type: String,
-            enum: ["USD", "EUR", "GBP", "INR", "JPY", "CAD"], // Supported currencies
-            default: "USD", // Default currency
-        },
+        required: true,
     },
     category: {
         type: String,  // e.g., shirts, pants, accessories, etc.

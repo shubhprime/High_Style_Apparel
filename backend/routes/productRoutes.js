@@ -1,15 +1,16 @@
 import express from 'express';
 import { getProductModel } from '../models/productDB.js'; // Import the function to get the Product model
+import userAuth from '../authentication/middleware/userAuth.js';
+import roleAuth from '../authentication/middleware/roleAuth.js';
 
 const router = express.Router();
 
 // Create a new product
-router.post("/", async (req, res) => {
+router.post("/", userAuth, roleAuth(["super-admin", "admin"]), async (req, res) => {
     try {
         const Product = getProductModel();  // Retrieve the Product model
         const newProduct = new Product(req.body);
         await newProduct.save();
-        console.log("Product saved:", newProduct);
         res.status(200).json({
             message: "Product successfully added",
             data: newProduct
@@ -55,7 +56,7 @@ router.get("/:id", async (req, res) => {
 });
 
 // Update a product by ID
-router.put("/:id", async (req, res) => {
+router.put("/:id", userAuth, roleAuth(["super-admin", "admin"]), async (req, res) => {
     const { id } = req.params;
     try {
         const Product = getProductModel();  // Retrieve the Product model
@@ -74,7 +75,7 @@ router.put("/:id", async (req, res) => {
 });
 
 // Delete a product by ID
-router.delete("/:id", async (req, res) => {
+router.delete("/:id", userAuth, roleAuth(["super-admin", "admin"]), async (req, res) => {
     const { id } = req.params;
     try {
         const Product = getProductModel();  // Retrieve the Product model
