@@ -11,7 +11,7 @@ export const getUserData = async (req, res) => {
         const user = await getUserModel().findById(userId);
 
         if(!user){
-            return res.json({success: false, message: 'User not found'});
+            return res.status(404).json({success: false, message: 'User not found'});
         }
 
         res.json({
@@ -23,7 +23,7 @@ export const getUserData = async (req, res) => {
         });
         
     } catch (error) {
-        res.json({ success: false, message: error.message });
+        res.status(200).json({ success: false, message: error.message });
     }
 }
 

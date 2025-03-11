@@ -13,6 +13,8 @@ import userRouter from './routes/userRoutes.js';
 import { orderRouter } from './orders/routes/orderRoutes.js';
 import { initOrderModel } from './models/orderDB.js';
 import levelRouter from './authentication/routes/userRoutes.js';
+import { cartRouter } from './orders/routes/cartRoutes.js';
+import { wishListRouter } from './orders/routes/wishListRoutes.js';
 
 // Load environment variables
 dotenv.config();
@@ -59,8 +61,11 @@ const initializeApp = async () => {
         app.use('/api/auth', authRouter); // All authentication routes will now use the authRoutes file
         app.use('/api/user', userRouter); // All user routes will now use the userRoutes file
         app.use('/api/order', orderRouter); // All order routes will now use the orderRoutes file
-        app.use('/api/user-level', levelRouter); // All order routes will now use the orderRoutes file
-        
+        app.use('/api/user-level', levelRouter); // All order routes will now use the levelRoutes file
+        app.use('/api/cart', cartRouter); // All order routes will now use the cartRoutes file
+        app.use('/api/wishlist', wishListRouter); // All wishlist routes will now use the wishListRoutes file
+
+
         // Start the server
         app.listen(PORT, () => {
             console.log(`Server is listening at port ${PORT}`);

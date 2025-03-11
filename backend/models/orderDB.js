@@ -2,7 +2,6 @@ import mongoose from "mongoose";
 import { connectDB } from "../db.js";
 
 // Define Orders Schema
-
 const orderSchema = new mongoose.Schema(
     {
 
@@ -106,14 +105,87 @@ const orderSchema = new mongoose.Schema(
     }
 );
 
+// Define Cart Schema
+const cartSchema = new mongoose.Schema({
+    userId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+        required: true
+    },
+    items: [
+        {
+            productId: {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: "Product",
+                required: true
+            },
+            quantity: {
+                type: Number,
+                required: true,
+                min: 1
+            },
+            priceAtAddition: {
+                type: Number,
+                required: true
+            },
+            totalPrice: {
+                type: Number,
+                default: 0,
+                required: true
+            }
+        }
+    ],
+    updatedAt: { type: Date, default: Date.now }
+}, { timestamps: true });
+
+// Define Wishlist Schema
+
+const wishListSchema = new mongoose.Schema({
+    userId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+        required: true
+    },
+    items: [
+        {
+            productId: {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: "Product",
+                required: true
+            },
+            priceAtAddition: {
+                type: Number,
+                required: true
+            }
+        }
+    ],
+    updatedAt: { type: Date, default: Date.now }
+},
+    {
+        timestamps: true
+    });
+
 // Declare Order Variable
-let Order;
+let Order, Cart, WishList;
 
 // Initialize and export the Order model asynchronously
 export const initOrderModel = async () => {
+    const { initializeProductModel } = await import("../models/productDB.js");
+    await initializeProductModel();
+
     const { orderConnection } = await connectDB();
+
     if (!Order) {
         Order = orderConnection.model("Order", orderSchema);
+        console.log("Order model initialized");
+    }
+    if (!Cart) {
+        Cart = orderConnection.model("Cart", cartSchema);
+        console.log("Cart model initialized");
+    }
+    if (!WishList) {
+        WishList = orderConnection.model("WishList", wishListSchema);
+        console.log("Wishlist model initialized");
     }
 };
 
@@ -124,3 +196,17 @@ export const getOrderModel = () => {
     }
     return Order;
 };
+
+export const getCartModel = () => {
+    if (!Cart) {
+        throw new Error("Cart model is not initialized yet. Call initOrderModel first.");
+    }
+    return Cart;
+};
+
+export const getWishListModel = () => {
+    if(!WishList) {
+        throw new Error("Wishlist model is not initialized yet. Call initOrderModel first.");
+    }
+    return WishList;
+}
