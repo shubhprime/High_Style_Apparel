@@ -170,7 +170,7 @@ let Order, Cart, WishList;
 
 // Initialize and export the Order model asynchronously
 export const initOrderModel = async () => {
-    const { initializeProductModel } = await import("../models/productDB.js");
+    const { initializeProductModel } = await import("./productDB.js");
     await initializeProductModel();
 
     const { orderConnection } = await connectDB();

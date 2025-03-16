@@ -88,7 +88,7 @@ export const removeItemFromCart = async(userId, productId) => {
 // Get user's cart service
 export const getUserCart = async(userId) => {
     const Cart = getCartModel();
-    let cart = await Cart.findOne({ userId })
+    let cart = await Cart.findOne({ userId });
 
     if(!cart){
         throw new Error("Cart Not Found");

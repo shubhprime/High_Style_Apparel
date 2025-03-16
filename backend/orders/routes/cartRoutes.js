@@ -13,6 +13,8 @@ cartRouter.put('/update-cart', userAuth, updateCartItem);
 // Remove an item from cart service
 cartRouter.delete('/remove-from-cart', userAuth, removeItem);
 
+
+// ⭐Error Occuring
 // Get user's cart service
 cartRouter.get('/get-cart', userAuth, getTheUserCart);
 

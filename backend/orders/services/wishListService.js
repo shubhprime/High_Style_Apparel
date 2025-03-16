@@ -1,4 +1,4 @@
-import { getWishListModel } from "../../models/orderDB.js";
+import { getWishListModel } from "../../models/orderDB";
 
 // Add item to wishlist
 export const addItem = async (userId, productId, amount) => {

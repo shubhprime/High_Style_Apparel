@@ -1,4 +1,4 @@
-import { addItem, clearList, getWishList, moveToCart, removeItem } from "../services/wishListService.js";
+import { addItem, clearList, getWishList, moveToCart, removeItem } from "../services/wishListService";
 
 // Add item to wishlist
 export const addItemToWishList = async (req, res) => {
