@@ -57,6 +57,14 @@ const userSchema = new mongoose.Schema(
       type: Number,
       default: 0
     },
+    resetSessionToken: {
+      type: String,
+      select: false, // Ensures it is not fetched unless explicitly requested
+    },
+    resetSessionStage: {
+      type: Number,
+      default: 0, // 0 - No session, 1 - OTP sent, 2 - OTP verified
+    },
   },
   {
     timestamps: true,
