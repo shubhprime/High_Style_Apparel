@@ -1,5 +1,6 @@
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
+import crypto from 'crypto';
 import { getUserModel } from "../../models/userDB.js"; // Ensure this import
 import transporter from '../../config/nodemailer.js';
 
@@ -202,23 +203,27 @@ export const isAuthenticated = async (req, res) => {
 // Send Password Reset OTP
 export const sendResetOtp = async (req, res) => {
 
-    const userId = req.user.id;
+    const {email} = req.body;
 
-    if (!userId) {
-        return res.status(401).json({ success: false, message: "Unauthorized" });
+    if(!email){
+        return res.status(400).json({ success: false, message: "Email is required" });
     }
 
     try {
 
-        const user = await getUserModel().findById(userId);
-        if (!user) {
+        const user = await getUserModel().findOne({ email });
+        if(!user){
             return res.status(404).json({ success: false, message: "User not found" });
         }
 
         const otp = String(Math.floor(100000 + Math.random() * 900000));
+        const resetSessionToken = crypto.randomBytes(32).toString('hex'); // Generate session token
 
         user.forgotPasswordCode = otp;
         user.forgotPasswordCodeExpireAt = Date.now() + (15 * 60 * 1000);
+        user.sessionId = sessionId; // Store session ID in DB
+        user.resetSessionStage = 1; // Mark stage
+
 
         await user.save();
 
@@ -232,7 +237,7 @@ export const sendResetOtp = async (req, res) => {
 
         await transporter.sendMail(mailOption);
 
-        res.status(200).json({ success: true, message: 'Password Reset OTP sent on Email' });
+        res.status(200).json({ success: true, message: 'Password Reset OTP sent on Email', sessionId });
 
     } catch (error) {
         return res.status(500).json({ success: false, message: error.message });
@@ -240,35 +245,31 @@ export const sendResetOtp = async (req, res) => {
 }
 
 export const verifyResetPasswordOtp = async (req, res) => {
-    const { otp } = req.body;
+    const { otp, sessionId } = req.body;
 
-    if (!otp) {
-        return res.status(400).json({ success: false, message: 'OTP is required' });
+    if (!sessionId || !otp) {
+        return res.status(400).json({ success: false, message: 'OTP and sessionId are required' });
     }
 
     try {
+        const user = await getUserModel().findOne({ sessionId });
 
-        const userId = req.user.id;
-        if (!userId) {
-            return res.status(401).json({ success: false, message: "Unauthorized" });
-        }
-
-        const user = await getUserModel().findById(userId);
         if (!user) {
-            return res.status(404).json({ success: false, message: "User not found" });
-        }
-
-        if (user.forgotPasswordCode === "" || user.forgotPasswordCode !== otp) {
-            return res.status(400).json({ success: false, message: 'Invalid OTP' });
+            return res.status(404).json({ success: false, message: "Invalid session" });
         }
 
         if (user.forgotPasswordCodeExpireAt < Date.now()) {
-            return res.status(400).json({ success: false, message: 'OTP Expired' });
+            return res.status(400).json({ success: false, message: 'OTP expired' });
         }
 
+        if (!user.forgotPasswordCode || user.forgotPasswordCode !== otp) {
+            return res.status(400).json({ success: false, message: 'Invalid OTP' });
+        }
+
+        // OTP is valid, clear it and generate a temporary reset token
         user.forgotPasswordCode = "";
         user.forgotPasswordCodeExpireAt = 0;
-
+        user.resetSessionStage = 2;
         await user.save();
 
         return res.status(200).json({ success: true, message: 'OTP verified successfully' });
@@ -276,40 +277,37 @@ export const verifyResetPasswordOtp = async (req, res) => {
     } catch (error) {
         return res.status(500).json({ success: false, message: error.message });
     }
-}
+};
 
 // Reset User Password
 export const resetPassword = async (req, res) => {
-    const { newPassword } = req.body;
+    const { newPassword, sessionId } = req.body;
 
-    if (!newPassword) {
-        return res.status(400).json({ success: false, message: 'New password are required' });
+    if (!sessionId || !newPassword) {
+        return res.status(400).json({ success: false, message: 'New password and sessionId are required' });
     }
 
     try {
+        const user = await getUserModel().findOne({ sessionId });
 
-        const token = req.cookies.token;
-        if (!token) {
-            return res.status(401).json({ success: false, message: 'Unauthorized' });
-        }
-
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        const userId = decoded.id;
-
-        const user = await getUserModel().findById(userId);
-        if (!user) {
-            return res.status(404).json({ success: false, message: "User not found" });
+        if (!user || user.sessionId !== 2) {
+            return res.status(404).json({ success: false, message: "Invalid session or stage" });
         }
 
         const hashedPassword = await bcrypt.hash(newPassword, 12);
-
         user.password = hashedPassword;
 
+        user.sessionId = ""; // Clear session ID
+        user.resetSessionStage = 0;
+        
         await user.save();
+
+        // Clear the reset token cookie after use
+        res.clearCookie('resetSessionToken');
 
         return res.status(200).json({ success: true, message: 'Password has been reset successfully' });
 
     } catch (error) {
-        return res.status(500).json({ success: false, message: error.message });
+        return res.status(500).json({ success: false, message: 'Invalid or expired reset token' });
     }
-}
+};

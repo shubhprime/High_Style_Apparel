@@ -1,6 +1,8 @@
 {
     "compilerOptions": {
-        "baseUrl": "src"
+        "baseUrl": "src",
+        "typeRoots": ["./node_modules/@types"],
+        "types": ["node"]
     },
     "include": ["src"]
 }

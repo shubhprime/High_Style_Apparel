@@ -18,9 +18,9 @@ const initializeRoutes = async () => {
     authRouter.post('/send-verify-otp', userAuth, sendVerifyOtp);
     authRouter.post('/verify-account', userAuth, verifyEmail);
     authRouter.post('/is-auth', userAuth, roleAuth(["super-admin", "admin"]), isAuthenticated);
-    authRouter.post('/send-reset-otp', userAuth, sendResetOtp);
-    authRouter.post('/verify-reset-otp', userAuth, verifyResetPasswordOtp);
-    authRouter.post('/reset-password', userAuth, resetPassword);
+    authRouter.post('/send-reset-otp', sendResetOtp);
+    authRouter.post('/verify-reset-otp', verifyResetPasswordOtp);
+    authRouter.post('/reset-password', resetPassword);
 
 
   } catch (error) {
