@@ -58,10 +58,10 @@ const initializeApp = async () => {
 
         app.use("/api/product", productRoutes);  // All products routes will now use the productRoutes file        
         app.use('/api/auth', authRouter); // All authentication routes will now use the authRoutes file
-        app.use('/api/user', userRouter); // All user routes will now use the userRoutes file
+        app.use('/api/user', userRouter); // All user routes will now use the routes/userRoutes file
         app.use('/api/order', orderRouter); // All order routes will now use the orderRoutes file
-        app.use('/api/user-level', levelRouter); // All order routes will now use the orderRoutes file
-        app.use('/api/cart', cartRouter); // All order routes will now use the orderRoutes file
+        app.use('/api/user-level', levelRouter); // All order routes will now use the authentication/routes/userRoutes file
+        app.use('/api/cart', cartRouter); // All order routes will now use the cartRoutes file
 
         // Start the server
         app.listen(PORT, () => {

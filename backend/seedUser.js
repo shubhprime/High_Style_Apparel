@@ -12,9 +12,17 @@ import { initUserModel, getUserModel } from './models/userDB.js';
         const newUser = new UserModel({
             firstName: "Jane",
             lastName: "Doe",
-            email: "janwse.doe@example.com",
+            email: "1234.doe@example.com",
             password: "google", // In a real-world scenario, hash the password
             phone: 9876543210,
+            homeAddress: {
+                house: "123A",
+                street: "Maple Street",
+                city: "New York",
+                state: "NY",
+                postalCode: "10001",
+                country: "USA"
+            }
         });
 
         // Save the new user to the database

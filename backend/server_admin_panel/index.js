@@ -9,6 +9,8 @@ import clientRouter from './routes/clientRoutes.js';
 import generalRouter from './routes/generalRoutes.js';
 import salesRouter from './routes/salesRoutes.js';
 import managementRouter from './routes/managementRoutes.js';
+import { initUserModel } from '../models/userDB.js';
+import { initializeProductModel } from '../models/productDB.js';
 
 // CONFIGURATION
 
@@ -33,10 +35,18 @@ app.use("/sales", salesRouter);
 
 const PORT = process.env.PORT || 9000;
 mongoose.connect(process.env.MONGODB_URL_USER)
-.then(() => {
-    app.listen(PORT, () => {
-        console.log(`Server is running on port ${PORT}`);
+    .then(async () => {
+        // Initialize User model
+        await initUserModel();
+        console.log("User model initialized");
+
+        // Initialize Product model
+        await initializeProductModel();  // Ensure Product model is initialized
+        console.log("Product model initialized");
+
+        app.listen(PORT, () => {
+            console.log(`Server is running on port ${PORT}`);
+        })
+    }).catch((error) => {
+        console.log(`${error} did not connect`);
     })
-}).catch((error) => {
-    console.log(`${error} did not connect`);
-})

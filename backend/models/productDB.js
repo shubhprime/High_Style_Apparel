@@ -32,9 +32,25 @@ const productSchema = new mongoose.Schema({
     },
     size: [String],  // Array of available sizes (e.g., ['S', 'M', 'L'])
     color: [String],  // Array of available colors (e.g., ['Red', 'Blue'])
+    rating: {
+        type: Number,
+        default: 4.0,
+        min: 0,
+        max: 5,
+    },
     stockQuantity: {
         type: Number,
         required: true,  // Track how many items are in stock
+    },
+    stat: {
+        yearlySalesTotal: {
+            type: Number,
+            default: 0,
+        },
+        yearlyTotalSoldUnits: {
+            type: Number,
+            default: 0,
+        }
     },
     imageURL: {
         type: String,  // URL to an image of the product (if applicable)

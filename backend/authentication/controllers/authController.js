@@ -70,7 +70,7 @@ export const login = async (req, res) => {
         const user = await User.findOne({ email }).select('password');
 
         if (!user) {
-            return res.status(404).json({ success: false, message: 'Invalid email' });
+            return res.status(404).json({ success: false, message: 'Invalid credentials' });
         }
 
         // console.log("Stored password:", user.password);
@@ -217,7 +217,7 @@ export const sendResetOtp = async (req, res) => {
         }
 
         const otp = String(Math.floor(100000 + Math.random() * 900000));
-        const resetSessionToken = crypto.randomBytes(32).toString('hex'); // Generate session token
+        const sessionId = crypto.randomBytes(32).toString('hex'); // Generate session token
 
         user.forgotPasswordCode = otp;
         user.forgotPasswordCodeExpireAt = Date.now() + (15 * 60 * 1000);
@@ -255,7 +255,7 @@ export const verifyResetPasswordOtp = async (req, res) => {
         const user = await getUserModel().findOne({ sessionId });
 
         if (!user) {
-            return res.status(404).json({ success: false, message: "Invalid session" });
+            return res.status(404).json({ success: false, message: "Invalid session or user not found" });
         }
 
         if (user.forgotPasswordCodeExpireAt < Date.now()) {
@@ -270,6 +270,7 @@ export const verifyResetPasswordOtp = async (req, res) => {
         user.forgotPasswordCode = "";
         user.forgotPasswordCodeExpireAt = 0;
         user.resetSessionStage = 2;
+        user.isOtpVerified = true;
         await user.save();
 
         return res.status(200).json({ success: true, message: 'OTP verified successfully' });
@@ -290,8 +291,8 @@ export const resetPassword = async (req, res) => {
     try {
         const user = await getUserModel().findOne({ sessionId });
 
-        if (!user || user.sessionId !== 2) {
-            return res.status(404).json({ success: false, message: "Invalid session or stage" });
+        if (!user || user.resetSessionStage !== 2 || !user.isOtpVerified) {
+            return res.status(404).json({ success: false, message: "Invalid OTP" });
         }
 
         const hashedPassword = await bcrypt.hash(newPassword, 12);
@@ -299,11 +300,9 @@ export const resetPassword = async (req, res) => {
 
         user.sessionId = ""; // Clear session ID
         user.resetSessionStage = 0;
+        user.isOtpVerified = false;
         
         await user.save();
-
-        // Clear the reset token cookie after use
-        res.clearCookie('resetSessionToken');
 
         return res.status(200).json({ success: true, message: 'Password has been reset successfully' });
 

@@ -57,14 +57,54 @@ const userSchema = new mongoose.Schema(
       type: Number,
       default: 0
     },
-    resetSessionToken: {
-      type: String,
+    sessionId: {
+      type: String, // New field replacing resetSessionToken
       select: false, // Ensures it is not fetched unless explicitly requested
+      default: "",
     },
     resetSessionStage: {
       type: Number,
       default: 0, // 0 - No session, 1 - OTP sent, 2 - OTP verified
     },
+    isOtpVerified: {
+      type: Boolean,
+      default: false, // New field to track OTP verification
+    },
+    homeAddress: {
+      type: {
+        house: {
+          type: String,
+          default: "",
+          required: true
+        },
+        street: {
+          type: String,
+          default: "",
+          required: true
+        },
+        city: {
+          type: String,
+          default: "",
+          required: true
+        },
+        state: {
+          type: String,
+          default: "",
+          required: true
+        },
+        postalCode: {
+          type: String,
+          default: "",
+          required: true
+        },
+        country: {
+          type: String,
+          default: "",
+          required: true
+        }
+      },
+      required: true
+    }
   },
   {
     timestamps: true,
