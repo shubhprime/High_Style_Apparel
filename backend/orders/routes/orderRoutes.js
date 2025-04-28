@@ -2,12 +2,15 @@
 
 import express from 'express';
 import userAuth from '../../authentication/middleware/userAuth.js';
-import { cancelUserOrder, changeOrderStatus, createNewOrder, getAllOrders, getOrderById } from '../controllers/orderController.js';
+import roleAuth from '../../authentication/middleware/roleAuth.js';
+import { cancelUserOrder, changeOrderStatus, createNewOrder, getAllOrders, getAllUsersOrders, getOrderById } from '../controllers/orderController.js';
 
 const orderRouter = express.Router();
 
 // Create a new order
 orderRouter.post('/create-order', userAuth, createNewOrder);
+// Get orders for all user
+orderRouter.get('/all-user-orders', userAuth, roleAuth(["super-admin", "admin"]), getAllUsersOrders);
 // Get all orders for a user
 orderRouter.get('/all-orders', userAuth, getAllOrders);
 // Get a single order by order ID

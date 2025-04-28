@@ -165,8 +165,38 @@ const wishListSchema = new mongoose.Schema({
         timestamps: true
     });
 
+// Define Wishlist Schema
+
+const OverallStatSchema = new mongoose.Schema(
+    {
+      totalCustomers: Number,
+      yearlySalesTotal: Number,
+      yearlyTotalSoldUnits: Number,
+      year: Number,
+      monthlyData: [
+        {
+          month: String,
+          totalSales: Number,
+          totalUnits: Number,
+        },
+      ],
+      dailyData: [
+        {
+          date: String,
+          totalSales: Number,
+          totalUnits: Number,
+        },
+      ],
+      salesByCategory: {
+        type: Map,
+        of: Number,
+      },
+    },
+    { timestamps: true }
+  );
+
 // Declare Order Variable
-let Order, Cart, WishList;
+let Order, Cart, WishList, OverallStat;
 
 // Initialize and export the Order model asynchronously
 export const initOrderModel = async () => {
@@ -186,6 +216,10 @@ export const initOrderModel = async () => {
     if (!WishList) {
         WishList = orderConnection.model("WishList", wishListSchema);
         console.log("Wishlist model initialized");
+    }
+    if (!OverallStat) {
+        Order = orderConnection.model("OverallStat", OverallStatSchema);
+        console.log("Overall Stats model initialized");
     }
 };
 
@@ -209,4 +243,11 @@ export const getWishListModel = () => {
         throw new Error("Wishlist model is not initialized yet. Call initOrderModel first.");
     }
     return WishList;
+}
+
+export const getOverallStatModel = () => {
+    if(!OverallStat) {
+        throw new Error("Overall Stats model is not initialized yet. Call initOrderModel first.");
+    }
+    return OverallStat;
 }

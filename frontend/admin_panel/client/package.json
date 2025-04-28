@@ -11,6 +11,7 @@
     "@nivo/bar": "^0.88.0",
     "@nivo/core": "^0.88.0",
     "@nivo/geo": "^0.88.0",
+    "@nivo/line": "^0.92.0",
     "@nivo/pie": "^0.88.0",
     "@reduxjs/toolkit": "^2.6.1",
     "@testing-library/dom": "^10.4.0",

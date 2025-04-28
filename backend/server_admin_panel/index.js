@@ -11,6 +11,7 @@ import salesRouter from './routes/salesRoutes.js';
 import managementRouter from './routes/managementRoutes.js';
 import { initUserModel } from '../models/userDB.js';
 import { initializeProductModel } from '../models/productDB.js';
+import { initOrderModel } from '../models/orderDB.js';
 
 // CONFIGURATION
 
@@ -43,6 +44,10 @@ mongoose.connect(process.env.MONGODB_URL_USER)
         // Initialize Product model
         await initializeProductModel();  // Ensure Product model is initialized
         console.log("Product model initialized");
+
+        // Initialize Order model
+        await initOrderModel();
+        console.log("Order model initialized");
 
         app.listen(PORT, () => {
             console.log(`Server is running on port ${PORT}`);

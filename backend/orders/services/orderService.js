@@ -1,6 +1,8 @@
 // Business logic for orders
 import { getOrderModel } from "../../models/orderDB.js";
 import { getProductModel } from "../../models/productDB.js";
+import mongoose from "mongoose";
+
 
 // Create a new Order
 export const createOrder = async (userId, orderData) => {
@@ -42,6 +44,46 @@ export const createOrder = async (userId, orderData) => {
         throw new Error(error.message);
     }
 }
+
+// Get orders of all users
+export const allUsersOrders = async ({ page, pageSize, sort, search }) => {
+    const generateSort = () => {
+        try {
+            const sortParsed = JSON.parse(sort);
+            return {
+                [sortParsed.field]: sortParsed.sort === "asc" ? 1 : -1,
+            };
+        } catch (err) {
+            return {};
+        }
+    };
+
+    const sortFormatted = Boolean(sort) ? generateSort() : {};
+
+    const searchQuery = [];
+
+    // Attempt to parse search as number for totalAmount
+    if (!isNaN(search)) {
+        searchQuery.push({ totalAmount: Number(search) });
+    }
+
+    // Attempt to parse search as ObjectId for userId
+    if (mongoose.Types.ObjectId.isValid(search)) {
+        searchQuery.push({ userId: new mongoose.Types.ObjectId.isValid(search) });
+    }
+
+    const query = searchQuery.length > 0 ? { $or: searchQuery } : {};
+
+    const transactions = await getOrderModel()
+        .find(query)
+        .sort(sortFormatted)
+        .skip((page - 1) * pageSize)
+        .limit(pageSize);
+
+    const total = await getOrderModel().countDocuments(query);
+
+    return { transactions, total };
+};
 
 // Get all orders of a user
 export const allOrders = async (userId) => {
@@ -114,7 +156,7 @@ export const updateOrderStatus = async (orderId, status) => {
 
         await order.save();
 
-        return{ success: true, message: "Order status updated", order };
+        return { success: true, message: "Order status updated", order };
 
     } catch (error) {
         throw new Error(error.message);
