@@ -1,3 +1,4 @@
+import { getOrderModel, getOverallStatModel } from "../../models/orderDB.js";
 import { getUserModel } from "../../models/userDB.js";
 import getCountryIso3 from "country-iso-2-to-3";
 
@@ -72,7 +73,7 @@ export const getGeography = async (req, res) => {
             acc[countryISO3]++;
             return acc;
         }, {});
-        
+
 
         const formattedLocations = Object.entries(mappedLocations).map(
             ([country, count]) => {
@@ -81,6 +82,55 @@ export const getGeography = async (req, res) => {
         );
 
         res.status(200).json(formattedLocations);
+    } catch (error) {
+        res.status(404).json({ message: error.message });
+    }
+};
+
+// Get relevant information for the admin panel dashboard
+export const getDashboardStats = async (req, res) => {
+    try {
+        const Order = getOrderModel();
+
+        // hardcoded values
+        const currentMonth = "August";
+        const currentYear = 2025;
+        const currentDay = "2025-08-01";
+
+        /* Recent Transactions */
+        const transactions = await Order.find()
+            .limit(50)
+            .sort({ createdAt: -1 });
+
+        /* Overall Stats */
+        const overallStat = await getOverallStatModel().find({ year: currentYear });
+
+        const {
+            totalCustomers,
+            yearlyTotalSoldUnits,
+            yearlySalesTotal,
+            monthlyData,
+            salesByCategory,
+        } = overallStat[0];
+
+        const thisMonthStats = overallStat[0].monthlyData.find(({ month }) => {
+            return month === currentMonth;
+        });
+
+        const todayStats = overallStat[0].dailyData.find(({ date }) => {
+            return date === currentDay;
+        });
+
+        res.status(200).json({
+            totalCustomers,
+            yearlyTotalSoldUnits,
+            yearlySalesTotal,
+            monthlyData,
+            salesByCategory,
+            thisMonthStats,
+            todayStats,
+            transactions,
+        });
     } catch (error) {
         res.status(404).json({ message: error.message });
     }

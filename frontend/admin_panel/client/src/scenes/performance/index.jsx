@@ -1,13 +1,15 @@
 import React from "react";
 import { Box, useTheme } from "@mui/material";
-import { useGetAdminsQuery } from "state/api";
+import { useGetUserPerformanceQuery } from "state/api";
+import { useSelector } from "react-redux";
 import { DataGrid } from "@mui/x-data-grid";
 import Header from "components/Header";
 import CustomColumnMenu from "components/DataGridCustomColumnMenu";
 
-const Admin = () => {
+const Performance = () => {
     const theme = useTheme();
-    const { data, isLoading } = useGetAdminsQuery();
+    const userId = useSelector((state) => state.global.userId);
+    const { data, isLoading } = useGetUserPerformanceQuery(userId);
 
     const columns = [
         {
@@ -16,44 +18,46 @@ const Admin = () => {
             flex: 1,
         },
         {
-            field: "firstName",
-            headerName: "First Name",
-            flex: 0.5,
-        },
-        {
-            field: "lastName",
-            headerName: "Last Name",
-            flex: 0.5,
-        },
-        {
-            field: "email",
-            headerName: "Email",
+            field: "userId",
+            headerName: "User ID",
             flex: 1,
         },
         {
-            field: "phone",
-            headerName: "Phone Number",
-            flex: 0.5,
-            renderCell: (params) => {
-                return params.value.replace(/^(\d{3})(\d{3})(\d{4})/, "($1)$2-$3");
-            },
+            field: "createdAt",
+            headerName: "CreatedAt",
+            flex: 1,
         },
         {
-            field: "country",
-            headerName: "Country",
-            flex: 0.4,
-            valueGetter: (params) => params.row.homeAddress?.country || "N/A",
+            field: "status",
+            headerName: "Status",
+            flex: 1,
         },
         {
-            field: "role",
-            headerName: "Role",
-            flex: 0.5,
+            field: "items",
+            headerName: "# of Products",
+            flex: 1,
+            sortable: false,
+            renderCell: (params) => params.row.items?.length || 0,
+        },
+        {
+            field: "paymentMethod",
+            headerName: "Payment Method",
+            flex: 1,
+        },
+        {
+            field: "totalAmount",
+            headerName: "Cost",
+            flex: 1,
+            renderCell: (params) => `$${Number(params.value).toFixed(2)}`,
         },
     ];
 
     return (
         <Box m="1.5rem 2.5rem">
-            <Header title="ADMINS" subtitle="Managing admins and list of admins" />
+            <Header
+                title="PERFORMANCE"
+                subtitle="Track your Affiliate Sales Performance Here"
+            />
             <Box
                 mt="40px"
                 height="75vh"
@@ -85,7 +89,7 @@ const Admin = () => {
                 <DataGrid
                     loading={isLoading || !data}
                     getRowId={(row) => row._id}
-                    rows={data || []}
+                    rows={(data && data.sales) || []}
                     columns={columns}
                     components={{
                         ColumnMenu: CustomColumnMenu,
@@ -96,4 +100,4 @@ const Admin = () => {
     );
 };
 
-export default Admin;
+export default Performance;

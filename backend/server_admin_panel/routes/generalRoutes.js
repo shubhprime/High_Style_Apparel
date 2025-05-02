@@ -3,6 +3,7 @@ import { getUserById } from '../../authentication/controllers/userController.js'
 
 const generalRouter = express.Router();
 
-generalRouter.get("/:id", getUserById)
+generalRouter.get("/user/:id", getUserById);
+generalRouter.get("/dashboard", getDashboardStats);
 
 export default generalRouter; 
