@@ -5,10 +5,18 @@ import { getUserModel } from "../../models/userDB.js"; // Ensure this import
 import transporter from '../../config/nodemailer.js';
 
 export const register = async (req, res) => {
-    const { firstName, lastName, email, password, phone } = req.body; // Destructure phone too
+    const { firstName, lastName, email, password, phone, homeAddress } = req.body; // Destructure phone too
 
-    if (!firstName || !email || !password) {
+    if (!firstName || !email || !password || !homeAddress) {
         return res.status(400).json({ success: false, message: "Missing Details" });
+    }
+
+    // Validate homeAddress fields
+    const requiredFields = ['house', 'street', 'city', 'state', 'postalCode', 'country'];
+    const missingFields = requiredFields.filter(field => !homeAddress[field]);
+
+    if (missingFields.length > 0) {
+        return res.status(400).json({ success: false, message: `Missing address fields: ${missingFields.join(", ")}` });
     }
 
     try {
@@ -28,6 +36,7 @@ export const register = async (req, res) => {
             email,
             password: hashedPassword,
             phone,
+            homeAddress,
         });
         await user.save();
 

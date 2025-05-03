@@ -3,6 +3,6 @@ import { getSales } from '../../orders/controllers/overallStatController.js';
 
 const salesRouter = express.Router();
 
-router.get("/sales", getSales);
+salesRouter.get("/sales", getSales);
 
 export default salesRouter;

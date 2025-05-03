@@ -218,7 +218,7 @@ export const initOrderModel = async () => {
         console.log("Wishlist model initialized");
     }
     if (!OverallStat) {
-        Order = orderConnection.model("OverallStat", OverallStatSchema);
+        OverallStat = orderConnection.model("OverallStat", OverallStatSchema);
         console.log("Overall Stats model initialized");
     }
 };

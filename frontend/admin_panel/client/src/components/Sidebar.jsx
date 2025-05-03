@@ -85,6 +85,8 @@ const Sidebar = ({
     setActive(pathname.substring(1));
   }, [pathname]);
 
+  console.log("user state:", user); // ✅ Add here
+
   return (
     <Box component="nav">
       {isSidebarOpen && (
